@@ -19,26 +19,35 @@ public class Main {
             }
         }
 
-        System.out.println(Arrays.deepToString(sudoku));
-        
-        //Test all lines
+        //Testando as linhas
         for (int i = 0; i < size; i++) {
             solved = solved && arraySolved(sudoku[i]);
-            System.out.println(solved);
         }
         
-        //Test all columns
+        //Testando as colunas
         for (int column = 0; column < size; column++) {
             int[] line = new int[size];
-            for(int row = 0; row < size; row++) {
+            for (int row = 0; row < size; row++) {
                 line[row] = sudoku[row][column];
             }
             solved = solved && arraySolved(line);
         }
 
-        //Test all squares
-                
-        
+        //Testando os 'quadrados'
+        for (int iStart = 0; iStart <= (size - n); iStart += n) {
+            for (int jStart = 0; jStart <= (size - n); jStart += n) {
+                int count = 0;
+                int[] square = new int[size];
+                for (int i = iStart; i < (iStart + n); i++) {
+                    for (int j = jStart; j < (jStart + n); j++) {
+                        square[count] = sudoku[i][j];
+                        count++;
+                    }
+                }
+                solved = solved && arraySolved(square);
+            }
+        }
+
         System.out.println(solved ? "YES" : "NO");
     }
     
@@ -57,8 +66,6 @@ public class Main {
           }
           numbers[n]++;
       }
-
-      System.out.println(Arrays.toString(numbers));
       
       for (int k = 0; k < numbers.length; k++) {
           if(numbers[k] > 1) {
