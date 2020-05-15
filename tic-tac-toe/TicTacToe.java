@@ -19,16 +19,78 @@ public class TicTacToe {
         String input = scanner.nextLine();
         int pos = 0;
 
+        //Lê os dados
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-               grid[i][j] = input.charAt(pos);
-               pos++; 
+                char c = input.charAt(pos);
+                grid[i][j] = c == '_' ? ' ' : c;
+                pos++; 
             }
         }
 
         printGrid(grid);
-        GameState state = analyzeGameState(grid);
-        System.out.println(printState(state));
+
+        int column = -1;
+        int row = -1;
+
+        //Checa se o movimento é valido
+        boolean validMove = false;
+        do {
+
+            System.out.print("Enter the coordinates: ");
+
+            String c = scanner.hasNext() ? scanner.next() : " ";
+            String r = scanner.hasNext() ? scanner.next() : " ";
+
+            if (!isNumeric(c) || !isNumeric(r)) {
+                System.out.println("You should enter numbers!");
+                continue;
+            }
+
+            column = Integer.parseInt(c);
+            row = Integer.parseInt(r);
+
+            if (column > 3 || column < 1 || row > 3 || row < 1) {
+                System.out.println("Coordinates should be from 1 to 3!");
+                continue;
+            }
+
+            if(cellOccupied(grid, row, column)) {
+                System.out.println("This cell is occupied! Choose another one!");
+                continue;
+            }            
+
+            validMove = true;
+
+        } while (!validMove);
+        
+        //Executa o movimento
+        grid = makeMove(grid, row, column);
+
+        printGrid(grid);
+
+        //GameState state = analyzeGameState(grid);
+        //System.out.println(printState(state));
+    }
+
+    static boolean cellOccupied(char[][] grid, int row, int column) {
+        
+        int i = -1;
+        if (row == 3) {
+            i = 0;
+        } else if (row == 2) {
+            i = 1;
+        } else if (row == 1) {
+            i = 2;
+        }
+
+        int j = column - 1;
+
+        if (grid[i][j] != ' ' ) {
+            return true;
+        }
+        
+        return false;
     }
 
     static void printGrid(char[][] grid) {
@@ -44,6 +106,23 @@ public class TicTacToe {
         }
 
         System.out.println("---------");
+    }
+
+    static char[][] makeMove(char[][] grid, int row, int column) {
+
+        int i = -1;
+        if (row == 3) {
+            i = 0;
+        } else if (row == 2) {
+            i = 1;
+        } else if (row == 1) {
+            i = 2;
+        }
+
+        int j = column - 1;
+        grid[i][j] = 'X';
+
+        return grid;
     }
 
     static String printState(GameState state) {
@@ -161,5 +240,17 @@ public class TicTacToe {
         }
 
         return count;
+    }
+
+    static boolean isNumeric(String number) {
+        boolean r = true;
+
+        try {
+            Integer.parseInt(number);
+        } catch (NumberFormatException nfe) {
+            r = false;
+        }
+
+        return r;
     }
 }
