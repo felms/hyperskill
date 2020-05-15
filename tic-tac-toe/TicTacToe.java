@@ -13,23 +13,34 @@ public class TicTacToe {
     public static void main(String[] args) {
         
         char[][] grid = new char[3][3];
-        Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter cells: ");
-        String input = scanner.nextLine();
-        int pos = 0;
-
-        //Lê os dados
+        //Inicializa o grid
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                char c = input.charAt(pos);
-                grid[i][j] = c == '_' ? ' ' : c;
-                pos++; 
+                grid[i][j] = ' ';
             }
         }
 
         printGrid(grid);
+        char player = 'X';
+        GameState state = analyzeGameState(grid);
 
+        while (!endGame(state)) {
+            
+            grid = makeMove(grid, player);            
+            printGrid(grid);
+            state = analyzeGameState(grid);
+            player = player == 'X' ? 'O' : 'X';
+        }
+
+        System.out.println(printState(state));
+
+    }
+
+    static char[][] makeMove(char[][] grid, char player) {
+
+
+        Scanner scanner = new Scanner(System.in);
         int column = -1;
         int row = -1;
 
@@ -63,14 +74,26 @@ public class TicTacToe {
             validMove = true;
 
         } while (!validMove);
-        
-        //Executa o movimento
-        grid = makeMove(grid, row, column);
 
-        printGrid(grid);
+        int i = -1;
+        if (row == 3) {
+            i = 0;
+        } else if (row == 2) {
+            i = 1;
+        } else if (row == 1) {
+            i = 2;
+        }
 
-        //GameState state = analyzeGameState(grid);
-        //System.out.println(printState(state));
+        int j = column - 1;
+        grid[i][j] = player;
+
+        return grid;
+    }
+
+    static boolean endGame(GameState state) {
+        return (state == GameState.DRAW || 
+                state == GameState.O_WINS || 
+                state == GameState.X_WINS);
     }
 
     static boolean cellOccupied(char[][] grid, int row, int column) {
@@ -106,23 +129,6 @@ public class TicTacToe {
         }
 
         System.out.println("---------");
-    }
-
-    static char[][] makeMove(char[][] grid, int row, int column) {
-
-        int i = -1;
-        if (row == 3) {
-            i = 0;
-        } else if (row == 2) {
-            i = 1;
-        } else if (row == 1) {
-            i = 2;
-        }
-
-        int j = column - 1;
-        grid[i][j] = 'X';
-
-        return grid;
     }
 
     static String printState(GameState state) {
@@ -180,7 +186,7 @@ public class TicTacToe {
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (grid[i][j] == '_') {
+                if (grid[i][j] == ' ') {
                     return true;
                 }
             }
