@@ -1,26 +1,30 @@
-import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) {
         
-        Scanner scanner = new Scanner(System.in);
+        String mode = "enc";
+        int key = 0;
+        String data = "";
 
-        String operation = scanner.nextLine();
-        String operationEnc = "enc";
-        String operationDec = "dec";
-        String message = scanner.nextLine();
-        int key = scanner.nextInt();
-
-
-        String encryptedMessage = "";
-        if (operation.equals(operationEnc)) {
-            encryptedMessage = encrypt(message, key); 
-        } else if (operation.equals(operationDec)) {
-            encryptedMessage = decrypt(message, key);
+        for (int i = 0; i <= args.length - 2; i += 2) {
+            
+            if ("-mode".equals(args[i])) {
+                mode = args[i + 1];
+            } else if ("-key".equals(args[i])) {
+                key = Integer.parseInt(args[i + 1]);
+            } else if ("-data".equals(args[i])) {
+                data = args[i + 1];
+            }
         }
-               
+
+        String message = "";       
         
-        System.out.println(encryptedMessage.toString());
+        if ("enc".equals(mode)) {
+            message = encrypt(data, key);
+        } else if ("dec".equals(mode)) {
+            message = decrypt(data, key);
+        }
+        
+        System.out.println(message);
     }
 
 
