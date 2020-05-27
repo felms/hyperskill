@@ -5,7 +5,7 @@ abstract class Meal {
     /**
      * It provides template method of meal routine.
      */
-    public void doMeal() {  
+    public void doMeal() {
         prepareIngredients();
         cook();
         eat();
@@ -40,14 +40,38 @@ class Steak extends Meal {
      }
 }
 
+class Sandwich extends Meal {
+
+    @Override
+    public void prepareIngredients() {
+        System.out.println("Ingredients: bacon, white bread, egg, cheese, mayonnaise, tomato");
+    }
+
+    @Override
+    public void cook() {
+        System.out.println("Paste ingredients between bread slices. Toast sandwich");
+    }
+
+    @Override
+    public void cleanUp() {
+        System.out.println("Lick fingers and go to sleep");
+    }
+}
+
 public class Main {
     public static void main(String[] args) {
         final Scanner scanner = new Scanner(System.in);
-        final String author = scanner.nextLine();
+        final String order = scanner.nextLine();
         scanner.close();
-        Meal meal = new Steak();
-        System.out.println(author + " wants to eat");
-        System.out.println(author + " decides to cook meal");
-        meal.doMeal();
+        Meal meal = null;
+        if ("Sandwich".equals(order)) {
+            meal = new Sandwich();
+            meal.doMeal();
+        } else if ("Steak".equals(order)) {
+            meal = new Steak();
+            meal.doMeal();
+        } else {
+            System.out.println("Error");
+        }
     }
 }
