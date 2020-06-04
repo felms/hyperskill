@@ -5,12 +5,33 @@ import java.io.InputStreamReader;
 public class Main {
     public static void main(String[] args) throws IOException {
 
+        String importFile = "";
+        String exportFile = "";
+        boolean loadCardsOnInit = false;
+        boolean saveCardsOnExit = false;
+
+        for (int i = 0; i < args.length; i++) {
+            String s = args[i];
+            if ("-import".equals(s)) {
+                importFile = args[i + 1];
+                loadCardsOnInit = true;
+            } else if ("-export".equals(s)) {
+                exportFile = args[i + 1];
+                saveCardsOnExit = true;
+            }
+        }
+
         BufferedReader br = new BufferedReader(
                 new InputStreamReader(System.in));
 
         Logger logger = new Logger();
 
         Flashcards flashcards = new Flashcards(logger);
+
+        // Reads an initial cards set from an external file
+        if (loadCardsOnInit) {
+            flashcards.loadOnInit(importFile);
+        }
 
         String option = "";
 
@@ -62,6 +83,12 @@ public class Main {
                     break;
 
             }
+        }
+
+        // Writes all the cards that are in the program
+        // memory to an external file
+        if (saveCardsOnExit) {
+            flashcards.saveOnExit(exportFile);
         }
 
     }

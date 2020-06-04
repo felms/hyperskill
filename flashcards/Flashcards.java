@@ -112,10 +112,50 @@ public class Flashcards {
 
             for (String s : triples) {
                 String[] p = s.split("=");
-                String[] err = p[1].split("->");
-                cDef.put(p[0], err[0]);
-                dCard.put(err[0], p[0]);
-                cErr.put(p[0], Integer.parseInt(err[1]));
+                cDef.put(p[0], p[1]);
+                dCard.put(p[1], p[0]);
+                cErr.put(p[0], Integer.parseInt(p[2]));
+            }
+
+            //Update the instance maps with the items read from file
+            cardDef.putAll(cDef);
+            cardError.putAll(cErr);
+            defCard = new TreeMap<>();
+            for(String key : cardDef.keySet()) {
+                defCard.put(cardDef.get(key), key);
+            }
+            output = String.format("%d cards have been loaded.", triples.length);
+            logger.log(output);
+            System.out.println(output);
+        } catch (IOException ioException) {
+            System.out.println("Not Found");
+        }
+    }
+
+    public void loadOnInit(String fileName){
+
+        try {
+
+            String output = "";
+
+            //Read text from file and store on "text" (a StringBuilder so I can manipulate it)
+            StringBuilder text = new StringBuilder(new String(Files.readAllBytes(Paths.get(fileName))).trim());
+
+            //Delete the first and last char ('{' and '}')
+            text.deleteCharAt(text.indexOf("{"));
+            text.deleteCharAt(text.lastIndexOf("}"));
+
+            //Make the entries and store them on new maps
+            String[] triples = text.toString().split(", ");
+            TreeMap<String, String> cDef = new TreeMap<>();
+            TreeMap<String, String> dCard = new TreeMap<>();
+            TreeMap<String, Integer> cErr = new TreeMap<>();
+
+            for (String s : triples) {
+                String[] p = s.split("=");
+                cDef.put(p[0], p[1]);
+                dCard.put(p[1], p[0]);
+                cErr.put(p[0], Integer.parseInt(p[2]));
             }
 
             //Update the instance maps with the items read from file
@@ -134,12 +174,29 @@ public class Flashcards {
     }
 
     public void exportToFile() {
+
         try {
             String output = "File name:";
             logger.log(output);
             System.out.println(output);
             String fileName = br.readLine().trim();
             logger.log(fileName);
+            pw = new PrintWriter(new File(fileName));
+            pw.write(this.toString());
+            pw.flush();
+            pw.close();
+            output = String.format("%d cards have been saved.", this.cardDef.size());
+            logger.log(output);
+            System.out.println(output);
+        } catch (IOException ioException) {
+            System.err.println(ioException.getCause());
+        }
+    }
+
+    public void saveOnExit(String fileName) {
+
+        try {
+            String output = "";
             pw = new PrintWriter(new File(fileName));
             pw.write(this.toString());
             pw.flush();
@@ -246,7 +303,7 @@ public class Flashcards {
         StringBuilder r = new StringBuilder();
         r.append("{");
         for (String s : this.cardDef.keySet()) {
-            r.append(String.format("%s=%s->%d, ", s, this.cardDef.get(s), this.cardError.get(s)));
+            r.append(String.format("%s=%s=%d, ", s, this.cardDef.get(s), this.cardError.get(s)));
         }
 
         if(this.cardDef.size() > 0) {
